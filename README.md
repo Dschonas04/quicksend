@@ -99,7 +99,7 @@ releases are built by GitHub Actions and not signed with a paid certificate.
 
 ## Building it yourself
 
-Go 1.22 or newer, no C compiler, no other dependency:
+Go 1.26 or newer, no C compiler, no other dependency:
 
 ```
 go test ./...
