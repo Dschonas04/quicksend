@@ -1,0 +1,32 @@
+name: Bug report
+description: Something does not work as described
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Quicksend version
+      placeholder: "1.1.1"
+    validations:
+      required: true
+  - type: input
+    id: systems
+    attributes:
+      label: Systems
+      description: Sender and receiver
+      placeholder: "Windows 11 → macOS 15"
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Output
+      description: What the terminal or the page showed, if anything.
+      render: text

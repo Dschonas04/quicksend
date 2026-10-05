@@ -1,5 +1,10 @@
 # Quicksend
 
+[![Check](https://github.com/Dschonas04/quicksend/actions/workflows/check.yml/badge.svg)](https://github.com/Dschonas04/quicksend/actions/workflows/check.yml)
+[![Release](https://img.shields.io/github/v/release/Dschonas04/quicksend)](https://github.com/Dschonas04/quicksend/releases/latest)
+[![Go](https://img.shields.io/github/go-mod/go-version/Dschonas04/quicksend)](go.mod)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Send files to another computer on the same network. No cloud, no account, no size limit —
 the two machines talk to each other directly, and a transfer that breaks off picks up where
 it stopped instead of starting over.
@@ -106,6 +111,11 @@ go test ./...
 go build ./cmd/quicksend
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o Quicksend.exe ./cmd/quicksend
 ```
+
+## Contributing
+
+Bug reports and pull requests are welcome, see [CONTRIBUTING.md](CONTRIBUTING.md).
+What changed in each version is in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
