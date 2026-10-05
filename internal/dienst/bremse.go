@@ -3,7 +3,7 @@ package dienst
 import (
 	"net"
 	"net/http"
-	"strings"
+	"net/url"
 	"sync"
 	"time"
 )
@@ -139,6 +139,20 @@ func istSchreibend(art string) bool {
 	return art == http.MethodPost || art == http.MethodPut || art == http.MethodDelete
 }
 
+// oertlicherUrsprung tells whether an Origin header names this machine. The host is
+// compared whole: a substring test would let http://localhost.example.com through.
+func oertlicherUrsprung(ursprung string) bool {
+	u, err := url.Parse(ursprung)
+	if err != nil || (u.Scheme != "http" && u.Scheme != "https") {
+		return false
+	}
+	switch u.Hostname() {
+	case "localhost", "127.0.0.1", "::1":
+		return true
+	}
+	return false
+}
+
 // GleicherUrsprung rejects a cross-site request to the interface. A browser always sends
 // Sec-Fetch-Site, so a page on the internet cannot forge it.
 func GleicherUrsprung(weiter http.Handler) http.Handler {
@@ -149,11 +163,9 @@ func GleicherUrsprung(weiter http.Handler) http.Handler {
 				http.Error(w, "Anfrage von einer fremden Seite", http.StatusForbidden)
 				return
 			}
-			if ursprung := r.Header.Get("Origin"); ursprung != "" {
-				if !strings.Contains(ursprung, "127.0.0.1") && !strings.Contains(ursprung, "localhost") {
-					http.Error(w, "fremder Ursprung", http.StatusForbidden)
-					return
-				}
+			if ursprung := r.Header.Get("Origin"); ursprung != "" && !oertlicherUrsprung(ursprung) {
+				http.Error(w, "fremder Ursprung", http.StatusForbidden)
+				return
 			}
 		}
 		weiter.ServeHTTP(w, r)

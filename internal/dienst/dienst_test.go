@@ -272,7 +272,11 @@ func TestSchreibenVonFremderSeiteWirdAbgewiesen(t *testing.T) {
 	}{
 		{"fremde Seite", http.MethodPost, "cross-site", "", http.StatusForbidden},
 		{"fremder Ursprung", http.MethodPost, "", "http://beispiel.invalid", http.StatusForbidden},
+		{"Name, der nur mit localhost beginnt", http.MethodPost, "", "http://localhost.beispiel.invalid", http.StatusForbidden},
+		{"Name, der 127.0.0.1 enthält", http.MethodPost, "", "http://127.0.0.1.beispiel.invalid", http.StatusForbidden},
+		{"undurchsichtiger Ursprung", http.MethodPost, "", "null", http.StatusForbidden},
 		{"eigene Seite", http.MethodPost, "same-origin", "http://127.0.0.1:51766", http.StatusOK},
+		{"localhost", http.MethodPost, "", "http://localhost:51766", http.StatusOK},
 		{"Lesen bleibt frei", http.MethodGet, "cross-site", "", http.StatusOK},
 	}
 	for _, f := range faelle {
