@@ -69,7 +69,7 @@ jobs:
           (cd dist && sha256sum * > pruefsummen-windows-linux.txt)
       # Signs a statement "this file came out of this workflow, from this commit", which
       # anyone can check with: gh attestation verify Quicksend.exe -R Dschonas04/quicksend
-      - uses: actions/attest-build-provenance@v3
+      - uses: actions/attest-build-provenance@v4
         with:
           subject-path: |
             dist/Quicksend.exe
@@ -137,7 +137,7 @@ jobs:
           hdiutil create -volname Quicksend -srcfolder "$paket" -ov -format UDZO "dist/Quicksend-${FASSUNG}-macos.dmg"
           rm -rf "$paket"
           (cd dist && shasum -a 256 * > pruefsummen-macos.txt)
-      - uses: actions/attest-build-provenance@v3
+      - uses: actions/attest-build-provenance@v4
         with:
           subject-path: dist/Quicksend-*-macos.dmg
       - uses: actions/upload-artifact@v7
