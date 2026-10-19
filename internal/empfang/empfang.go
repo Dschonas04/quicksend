@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Dschonas04/quicksend/internal/tagebuch"
+	"github.com/Dschonas04/sendr/internal/tagebuch"
 )
 
 // How much data is written before the file and its journal entry are flushed to disk.
@@ -61,7 +61,7 @@ type vorgang struct {
 
 // Neu prepares the folders and picks up whatever an earlier run left behind.
 func Neu(zielordner string, autoAnnehmen bool) (*Empfang, error) {
-	arbeit := filepath.Join(zielordner, ".quicksend")
+	arbeit := filepath.Join(zielordner, ".sendr")
 	if err := os.MkdirAll(arbeit, 0o700); err != nil {
 		return nil, err
 	}

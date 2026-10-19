@@ -44,7 +44,7 @@ jobs:
         run: |
           for paar in "linux amd64" "linux arm64" "windows amd64" "darwin amd64" "darwin arm64"; do
             set -- $paar
-            CGO_ENABLED=0 GOOS=$1 GOARCH=$2 go build -o /tmp/quicksend-$1-$2 ./cmd/quicksend
+            CGO_ENABLED=0 GOOS=$1 GOARCH=$2 go build -o /tmp/sendr-$1-$2 ./cmd/sendr
           done
 
   schwachstellen:

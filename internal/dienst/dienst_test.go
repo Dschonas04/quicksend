@@ -18,13 +18,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Dschonas04/quicksend/internal/dienst"
-	"github.com/Dschonas04/quicksend/internal/einstellungen"
-	"github.com/Dschonas04/quicksend/internal/empfang"
-	"github.com/Dschonas04/quicksend/internal/kennung"
-	"github.com/Dschonas04/quicksend/internal/suche"
-	"github.com/Dschonas04/quicksend/internal/tagebuch"
-	"github.com/Dschonas04/quicksend/internal/versand"
+	"github.com/Dschonas04/sendr/internal/dienst"
+	"github.com/Dschonas04/sendr/internal/einstellungen"
+	"github.com/Dschonas04/sendr/internal/empfang"
+	"github.com/Dschonas04/sendr/internal/kennung"
+	"github.com/Dschonas04/sendr/internal/suche"
+	"github.com/Dschonas04/sendr/internal/tagebuch"
+	"github.com/Dschonas04/sendr/internal/versand"
 )
 
 const testCode = "123456"
@@ -120,7 +120,7 @@ func TestUebertragungUeberlebtAbbruch(t *testing.T) {
 	zielordner := t.TempDir()
 	adresse, finger, abbrueche := gegenseite(t, zielordner, 2)
 
-	daten := bytes.Repeat([]byte("Quicksend überträgt auch nach einem Abbruch weiter. "), 60000)
+	daten := bytes.Repeat([]byte("Sendr überträgt auch nach einem Abbruch weiter. "), 60000)
 	abgabe, err := versand.Neu(t.TempDir(), "Sender", func(string) string { return testCode })
 	if err != nil {
 		t.Fatal(err)
@@ -221,7 +221,7 @@ func TestZuVieleFalscheCodesWerdenGebremst(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		anfrage.Header.Set("X-Quicksend-Code", code)
+		anfrage.Header.Set("X-Sendr-Code", code)
 		antwort, err := kunde.Do(anfrage)
 		if err != nil {
 			t.Fatal(err)

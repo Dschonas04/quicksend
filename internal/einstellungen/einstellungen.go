@@ -41,7 +41,12 @@ func Ordner() (string, error) {
 		}
 		basis = filepath.Join(heim, ".config")
 	}
-	ordner := filepath.Join(basis, "quicksend")
+	ordner := filepath.Join(basis, "sendr")
+	// Until v1.1.1 the app was called Quicksend. Take its folder over so known
+	// devices, the certificate and the queue survive the rename.
+	if _, err := os.Stat(ordner); os.IsNotExist(err) {
+		_ = os.Rename(filepath.Join(basis, "quicksend"), ordner)
+	}
 	if err := os.MkdirAll(ordner, 0o700); err != nil {
 		return "", err
 	}
@@ -148,7 +153,7 @@ func neuerCode() string {
 func standardName() string {
 	name, err := os.Hostname()
 	if err != nil || name == "" {
-		return "Quicksend-" + runtime.GOOS
+		return "Sendr-" + runtime.GOOS
 	}
 	return name
 }
@@ -156,13 +161,13 @@ func standardName() string {
 func standardZiel() string {
 	heim, err := os.UserHomeDir()
 	if err != nil {
-		return "quicksend-empfang"
+		return "sendr-empfang"
 	}
 	for _, kandidat := range []string{"Downloads", "Download"} {
 		pfad := filepath.Join(heim, kandidat)
 		if info, fehler := os.Stat(pfad); fehler == nil && info.IsDir() {
-			return filepath.Join(pfad, "Quicksend")
+			return filepath.Join(pfad, "Sendr")
 		}
 	}
-	return filepath.Join(heim, "Quicksend")
+	return filepath.Join(heim, "Sendr")
 }

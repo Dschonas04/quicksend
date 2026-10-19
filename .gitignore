@@ -1,5 +1,5 @@
 /dist/
-/quicksend
-/quicksend-*
+/sendr
+/sendr-*
 *.exe
 *.dmg

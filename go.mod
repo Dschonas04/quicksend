@@ -1,4 +1,4 @@
-module github.com/Dschonas04/quicksend
+module github.com/Dschonas04/sendr
 
 go 1.26.0
 

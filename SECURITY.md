@@ -7,7 +7,7 @@ not open a normal issue for it. There is no bounty; this is a hobby project.
 
 ## What the design assumes
 
-Quicksend is meant for a network you already trust as far as printers and TVs are
+Sendr is meant for a network you already trust as far as printers and TVs are
 concerned: a home or office LAN. It is not meant to be reachable from the internet, and
 port 51765 should not be forwarded on a router.
 
@@ -38,7 +38,7 @@ Within that setting it defends against the obvious moves:
 
 ```
 sha256sum -c pruefsummen-windows-linux.txt
-gh attestation verify Quicksend.exe -R Dschonas04/quicksend
+gh attestation verify Sendr.exe -R Dschonas04/sendr
 ```
 
 The second command asks GitHub whether that exact file came out of this repository's

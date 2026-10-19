@@ -62,19 +62,19 @@ jobs:
         run: |
           set -eu
           mkdir -p dist
-          marke="-s -w -X github.com/Dschonas04/quicksend/internal/dienst.Version=${FASSUNG}"
-          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "$marke" -o dist/Quicksend.exe ./cmd/quicksend
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "$marke" -o dist/quicksend-linux-amd64 ./cmd/quicksend
-          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "$marke" -o dist/quicksend-linux-arm64 ./cmd/quicksend
+          marke="-s -w -X github.com/Dschonas04/sendr/internal/dienst.Version=${FASSUNG}"
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "$marke" -o dist/Sendr.exe ./cmd/sendr
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "$marke" -o dist/sendr-linux-amd64 ./cmd/sendr
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "$marke" -o dist/sendr-linux-arm64 ./cmd/sendr
           (cd dist && sha256sum * > pruefsummen-windows-linux.txt)
       # Signs a statement "this file came out of this workflow, from this commit", which
-      # anyone can check with: gh attestation verify Quicksend.exe -R Dschonas04/quicksend
+      # anyone can check with: gh attestation verify Sendr.exe -R Dschonas04/sendr
       - uses: actions/attest-build-provenance@v3
         with:
           subject-path: |
-            dist/Quicksend.exe
-            dist/quicksend-linux-amd64
-            dist/quicksend-linux-arm64
+            dist/Sendr.exe
+            dist/sendr-linux-amd64
+            dist/sendr-linux-arm64
       - uses: actions/upload-artifact@v7
         with:
           name: windows-linux
@@ -101,32 +101,32 @@ jobs:
           FASSUNG: ${{ needs.fassung.outputs.wert }}
         run: |
           set -eu
-          marke="-s -w -X github.com/Dschonas04/quicksend/internal/dienst.Version=${FASSUNG}"
-          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags "$marke" -o quicksend-amd64 ./cmd/quicksend
-          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -trimpath -ldflags "$marke" -o quicksend-arm64 ./cmd/quicksend
-          lipo -create -output quicksend-universal quicksend-amd64 quicksend-arm64
-          paket="dist/Quicksend.app"
+          marke="-s -w -X github.com/Dschonas04/sendr/internal/dienst.Version=${FASSUNG}"
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags "$marke" -o sendr-amd64 ./cmd/sendr
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -trimpath -ldflags "$marke" -o sendr-arm64 ./cmd/sendr
+          lipo -create -output sendr-universal sendr-amd64 sendr-arm64
+          paket="dist/Sendr.app"
           mkdir -p "$paket/Contents/MacOS"
-          cp quicksend-universal "$paket/Contents/MacOS/quicksend"
-          chmod +x "$paket/Contents/MacOS/quicksend"
+          cp sendr-universal "$paket/Contents/MacOS/sendr"
+          chmod +x "$paket/Contents/MacOS/sendr"
           cat > "$paket/Contents/Info.plist" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
-            <key>CFBundleName</key><string>Quicksend</string>
-            <key>CFBundleDisplayName</key><string>Quicksend</string>
-            <key>CFBundleIdentifier</key><string>io.github.dschonas04.quicksend</string>
+            <key>CFBundleName</key><string>Sendr</string>
+            <key>CFBundleDisplayName</key><string>Sendr</string>
+            <key>CFBundleIdentifier</key><string>io.github.dschonas04.sendr</string>
             <key>CFBundleVersion</key><string>${FASSUNG}</string>
             <key>CFBundleShortVersionString</key><string>${FASSUNG}</string>
-            <key>CFBundleExecutable</key><string>quicksend</string>
+            <key>CFBundleExecutable</key><string>sendr</string>
             <key>CFBundlePackageType</key><string>APPL</string>
             <key>LSMinimumSystemVersion</key><string>11.0</string>
             <key>LSUIElement</key><true/>
             <key>NSLocalNetworkUsageDescription</key>
-            <string>Quicksend sucht im lokalen Netz nach Geräten, an die es Dateien senden kann.</string>
+            <string>Sendr sucht im lokalen Netz nach Geräten, an die es Dateien senden kann.</string>
             <key>NSBonjourServices</key>
-            <array><string>_quicksend._tcp</string></array>
+            <array><string>_sendr._tcp</string></array>
           </dict>
           </plist>
           PLIST
@@ -134,12 +134,12 @@ jobs:
           # notices any later tampering instead of running it silently.
           codesign --force --deep --sign - --timestamp=none "$paket"
           codesign --verify --strict --verbose=2 "$paket"
-          hdiutil create -volname Quicksend -srcfolder "$paket" -ov -format UDZO "dist/Quicksend-${FASSUNG}-macos.dmg"
+          hdiutil create -volname Sendr -srcfolder "$paket" -ov -format UDZO "dist/Sendr-${FASSUNG}-macos.dmg"
           rm -rf "$paket"
           (cd dist && shasum -a 256 * > pruefsummen-macos.txt)
       - uses: actions/attest-build-provenance@v3
         with:
-          subject-path: dist/Quicksend-*-macos.dmg
+          subject-path: dist/Sendr-*-macos.dmg
       - uses: actions/upload-artifact@v7
         with:
           name: macos

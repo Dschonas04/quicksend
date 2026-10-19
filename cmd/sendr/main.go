@@ -1,4 +1,4 @@
-// Quicksend sends files to another device on the same network. Start it without arguments
+// Sendr sends files to another device on the same network. Start it without arguments
 // and it opens its page in the browser; the transfer itself runs in the background service,
 // which picks interrupted transfers up again where they stopped.
 package main
@@ -15,13 +15,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Dschonas04/quicksend/internal/dienst"
-	"github.com/Dschonas04/quicksend/internal/einstellungen"
-	"github.com/Dschonas04/quicksend/internal/empfang"
-	"github.com/Dschonas04/quicksend/internal/kennung"
-	"github.com/Dschonas04/quicksend/internal/suche"
-	"github.com/Dschonas04/quicksend/internal/tagebuch"
-	"github.com/Dschonas04/quicksend/internal/versand"
+	"github.com/Dschonas04/sendr/internal/dienst"
+	"github.com/Dschonas04/sendr/internal/einstellungen"
+	"github.com/Dschonas04/sendr/internal/empfang"
+	"github.com/Dschonas04/sendr/internal/kennung"
+	"github.com/Dschonas04/sendr/internal/suche"
+	"github.com/Dschonas04/sendr/internal/tagebuch"
+	"github.com/Dschonas04/sendr/internal/versand"
 )
 
 func main() {
@@ -99,7 +99,7 @@ func starten(befehle []string, port int, name, ziel, an, code string, ohneBrowse
 
 	d := &dienst.Dienst{Einst: einst, Kennung: kenn, Empfang: annahme, Versand: abgabe, Liste: liste}
 	adresse := fmt.Sprintf("http://127.0.0.1:%d", einst.UiPort())
-	fmt.Printf("Quicksend läuft.\n  Oberfläche: %s\n  Gerätename: %s\n  Freigabecode: %s\n  Empfang in: %s\n",
+	fmt.Printf("Sendr läuft.\n  Oberfläche: %s\n  Gerätename: %s\n  Freigabecode: %s\n  Empfang in: %s\n",
 		adresse, einst.GeraeteName, einst.Freigabecode, einst.Zielordner)
 	if !ohneBrowser {
 		oeffnen(adresse)
@@ -115,7 +115,7 @@ func geraeteZeigen(ctx context.Context, liste *suche.Liste) error {
 	}
 	gefunden := liste.Geraete()
 	if len(gefunden) == 0 {
-		fmt.Println("Kein Gerät gefunden. Läuft Quicksend auf der Gegenseite, und sind beide im gleichen Netz?")
+		fmt.Println("Kein Gerät gefunden. Läuft Sendr auf der Gegenseite, und sind beide im gleichen Netz?")
 		return nil
 	}
 	for _, g := range gefunden {
@@ -127,10 +127,10 @@ func geraeteZeigen(ctx context.Context, liste *suche.Liste) error {
 func sendenBefehl(ctx context.Context, einst *einstellungen.Einstellungen, liste *suche.Liste,
 	abgabe *versand.Versand, dateien []string, an, code string) error {
 	if len(dateien) == 0 {
-		return fmt.Errorf("welche Datei? Aufruf: quicksend senden <datei> -an <gerät> -code <code>")
+		return fmt.Errorf("welche Datei? Aufruf: sendr senden <datei> -an <gerät> -code <code>")
 	}
 	if an == "" {
-		return fmt.Errorf("welches Gerät? -an <Name oder Id>, sichtbare Geräte zeigt 'quicksend geraete'")
+		return fmt.Errorf("welches Gerät? -an <Name oder Id>, sichtbare Geräte zeigt 'sendr geraete'")
 	}
 	suchZeit, abbrechen := context.WithTimeout(ctx, 6*time.Second)
 	defer abbrechen()

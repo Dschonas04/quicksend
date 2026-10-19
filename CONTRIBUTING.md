@@ -1,11 +1,11 @@
 # Contributing
 
-Thanks for wanting to improve Quicksend.
+Thanks for wanting to improve Sendr.
 
 ## Reporting bugs
 
-Open an [issue](https://github.com/Dschonas04/quicksend/issues/new/choose)
-with your operating system, the Quicksend version (shown at the top of the
+Open an [issue](https://github.com/Dschonas04/sendr/issues/new/choose)
+with your operating system, the Sendr version (shown at the top of the
 page) and what happened. Security problems please report privately, see
 [SECURITY.md](SECURITY.md).
 
@@ -17,7 +17,7 @@ Go 1.26 or newer, no C compiler:
 go test -race ./...
 go vet ./...
 gofmt -l .            # must print nothing
-go build ./cmd/quicksend
+go build ./cmd/sendr
 ```
 
 ## Pull requests
@@ -27,7 +27,7 @@ go build ./cmd/quicksend
 3. Add a line under "Unreleased" in [CHANGELOG.md](CHANGELOG.md).
 4. Open a pull request and say what changes and why.
 
-Quicksend has no runtime dependencies beyond the Go standard library and the
+Sendr has no runtime dependencies beyond the Go standard library and the
 mDNS package. Please keep it that way unless there is a strong reason.
 
 ## License

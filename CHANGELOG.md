@@ -1,10 +1,17 @@
 # Changelog
 
-All notable changes to Quicksend. The format follows
+All notable changes to Sendr. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow
 [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+
+### Changed
+- Renamed from Quicksend to Sendr: binary, app bundle, mDNS service type
+  (`_sendr._tcp`) and the `X-Sendr-Code` header. Older Quicksend versions no
+  longer see Sendr devices on the network, so update both sides.
+- The config folder moves from `quicksend` to `sendr` on first start; known
+  devices, the device certificate and the send queue are kept.
 
 ## [1.1.1] - 2026-10-05
 
@@ -45,7 +52,7 @@ All notable changes to Quicksend. The format follows
   are moved into place.
 - Single binaries for Windows, macOS (`.dmg`) and Linux.
 
-[Unreleased]: https://github.com/Dschonas04/quicksend/compare/v1.1.1...HEAD
-[1.1.1]: https://github.com/Dschonas04/quicksend/compare/v1.1.0...v1.1.1
-[1.1.0]: https://github.com/Dschonas04/quicksend/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/Dschonas04/quicksend/releases/tag/v1.0.0
+[Unreleased]: https://github.com/Dschonas04/sendr/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/Dschonas04/sendr/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/Dschonas04/sendr/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/Dschonas04/sendr/releases/tag/v1.0.0

@@ -18,12 +18,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Dschonas04/quicksend/internal/einstellungen"
-	"github.com/Dschonas04/quicksend/internal/empfang"
-	"github.com/Dschonas04/quicksend/internal/kennung"
-	"github.com/Dschonas04/quicksend/internal/suche"
-	"github.com/Dschonas04/quicksend/internal/tagebuch"
-	"github.com/Dschonas04/quicksend/internal/versand"
+	"github.com/Dschonas04/sendr/internal/einstellungen"
+	"github.com/Dschonas04/sendr/internal/empfang"
+	"github.com/Dschonas04/sendr/internal/kennung"
+	"github.com/Dschonas04/sendr/internal/suche"
+	"github.com/Dschonas04/sendr/internal/tagebuch"
+	"github.com/Dschonas04/sendr/internal/versand"
 )
 
 //go:embed alle/*
@@ -247,7 +247,7 @@ func (d *Dienst) mitCode(weiter http.HandlerFunc) http.HandlerFunc {
 				fmt.Errorf("zu viele falsche Codes, bitte %s warten", rest.Round(time.Second)))
 			return
 		}
-		gegeben := r.Header.Get("X-Quicksend-Code")
+		gegeben := r.Header.Get("X-Sendr-Code")
 		soll := d.Einst.Freigabecode
 		if subtle.ConstantTimeCompare([]byte(gegeben), []byte(soll)) != 1 {
 			d.Bremse().Fehlschlag(wer)
