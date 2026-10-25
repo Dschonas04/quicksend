@@ -9,11 +9,11 @@ import (
 
 func TestSchreibenUndLesen(t *testing.T) {
 	ordner := t.TempDir()
-	e := Eintrag{Id: "abc123", Name: "datei.bin", Groesse: 10, Sha256: "ff", Zustand: Laeuft, Uebertragen: 4}
+	e := Eintrag{Id: "0123456789abcdef", Name: "datei.bin", Groesse: 10, Sha256: "ff", Zustand: Laeuft, Uebertragen: 4}
 	if err := Schreiben(ordner, e); err != nil {
 		t.Fatal(err)
 	}
-	gelesen, err := Lesen(ordner, "abc123")
+	gelesen, err := Lesen(ordner, "0123456789abcdef")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -30,7 +30,7 @@ func TestSchreibenUndLesen(t *testing.T) {
 
 func TestAlleSortiertNeuesteZuerst(t *testing.T) {
 	ordner := t.TempDir()
-	for _, id := range []string{"eins", "zwei"} {
+	for _, id := range []string{"00000000000000e1", "00000000000000e2"} {
 		if err := Schreiben(ordner, Eintrag{Id: id, Name: id}); err != nil {
 			t.Fatal(err)
 		}
@@ -46,7 +46,7 @@ func TestAlleSortiertNeuesteZuerst(t *testing.T) {
 	if len(alle) != 2 {
 		t.Fatalf("%d Einträge, erwartet 2 (ein beschädigter darf den Rest nicht verstecken)", len(alle))
 	}
-	if alle[0].Id != "zwei" {
+	if alle[0].Id != "00000000000000e2" {
 		t.Fatalf("Reihenfolge falsch: %s zuerst", alle[0].Id)
 	}
 }
@@ -61,7 +61,22 @@ func TestAnteil(t *testing.T) {
 }
 
 func TestLoeschenIstNachsichtig(t *testing.T) {
-	if err := Loeschen(t.TempDir(), "gibtesnicht"); err != nil {
+	if err := Loeschen(t.TempDir(), "00000000000000ff"); err != nil {
 		t.Fatalf("Löschen eines fehlenden Eintrags soll still gelingen: %v", err)
+	}
+}
+
+func TestFremdeKennungWirdAbgelehnt(t *testing.T) {
+	ordner := t.TempDir()
+	for _, id := range []string{"", "../einstellungen", "..", "ABCDEF0123456789", "0123456789abcdef/x", "0123456789abcde"} {
+		if _, err := Lesen(ordner, id); err != ErrUngueltig {
+			t.Errorf("Lesen(%q) = %v, erwartet ErrUngueltig", id, err)
+		}
+		if err := Loeschen(ordner, id); err != ErrUngueltig {
+			t.Errorf("Loeschen(%q) = %v, erwartet ErrUngueltig", id, err)
+		}
+		if err := Schreiben(ordner, Eintrag{Id: id}); err != ErrUngueltig {
+			t.Errorf("Schreiben(%q) = %v, erwartet ErrUngueltig", id, err)
+		}
 	}
 }

@@ -84,9 +84,13 @@ func schreiben(pfad, art string, rohdaten []byte, rechte os.FileMode) error {
 	if err != nil {
 		return err
 	}
-	defer datei.Close()
 	if err := pem.Encode(datei, &pem.Block{Type: art, Bytes: rohdaten}); err != nil {
+		datei.Close()
 		return err
 	}
-	return datei.Sync()
+	if err := datei.Sync(); err != nil {
+		datei.Close()
+		return err
+	}
+	return datei.Close()
 }

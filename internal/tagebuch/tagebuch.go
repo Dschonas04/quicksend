@@ -8,6 +8,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -48,11 +49,22 @@ func (e Eintrag) Anteil() float64 {
 	return float64(e.Uebertragen) / float64(e.Groesse)
 }
 
+// gueltig is the shape of every id the app hands out: 16 lowercase hex digits. Ids arrive
+// from the network and the local interface, so anything else, above all "../", is refused
+// before it becomes part of a path.
+var gueltig = regexp.MustCompile(`^[0-9a-f]{16}$`)
+
+// ErrUngueltig reports an id that is not one of ours.
+var ErrUngueltig = errors.New("ungültige Kennung")
+
+// Gueltig tells whether id has the shape of an id the app hands out.
+func Gueltig(id string) bool { return gueltig.MatchString(id) }
+
 // Schreiben stores an entry as <ordner>/<id>.json, written to a temporary file and
 // renamed into place, so a crash never leaves a truncated entry behind.
 func Schreiben(ordner string, e Eintrag) error {
-	if e.Id == "" {
-		return errors.New("Eintrag ohne Id")
+	if !gueltig.MatchString(e.Id) {
+		return ErrUngueltig
 	}
 	if err := os.MkdirAll(ordner, 0o700); err != nil {
 		return err
@@ -85,6 +97,9 @@ func Schreiben(ordner string, e Eintrag) error {
 // Lesen returns a single entry.
 func Lesen(ordner, id string) (Eintrag, error) {
 	var e Eintrag
+	if !gueltig.MatchString(id) {
+		return e, ErrUngueltig
+	}
 	rohdaten, err := os.ReadFile(filepath.Join(ordner, id+".json"))
 	if err != nil {
 		return e, err
@@ -118,6 +133,9 @@ func Alle(ordner string) ([]Eintrag, error) {
 
 // Loeschen removes an entry.
 func Loeschen(ordner, id string) error {
+	if !gueltig.MatchString(id) {
+		return ErrUngueltig
+	}
 	err := os.Remove(filepath.Join(ordner, id+".json"))
 	if err != nil && !os.IsNotExist(err) {
 		return err

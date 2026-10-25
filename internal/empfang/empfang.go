@@ -155,6 +155,9 @@ func (x *Empfang) Anmelden(a Anmeldung) (Antwort, error) {
 
 // Freigeben accepts or rejects a waiting transfer.
 func (x *Empfang) Freigeben(id string, ja bool) error {
+	if !tagebuch.Gueltig(id) {
+		return tagebuch.ErrUngueltig
+	}
 	x.sperre.Lock()
 	v, da := x.offen[id]
 	if !da {
@@ -177,7 +180,10 @@ func (x *Empfang) Freigeben(id string, ja bool) error {
 }
 
 // Schreiben appends the body at the given offset and reports how far the file now reaches.
-func (x *Empfang) Schreiben(id string, versatz int64, koerper io.Reader) (int64, error) {
+func (x *Empfang) Schreiben(id string, versatz int64, koerper io.Reader) (_ int64, err error) {
+	if !tagebuch.Gueltig(id) {
+		return 0, tagebuch.ErrUngueltig
+	}
 	x.sperre.Lock()
 	v, da := x.offen[id]
 	if !da {
@@ -194,7 +200,12 @@ func (x *Empfang) Schreiben(id string, versatz int64, koerper io.Reader) (int64,
 	if err != nil {
 		return 0, err
 	}
-	defer datei.Close()
+	defer func() {
+		// A failed close can mean the last bytes never reached the disk.
+		if fehler := datei.Close(); fehler != nil && err == nil {
+			err = fehler
+		}
+	}()
 
 	info, err := datei.Stat()
 	if err != nil {
@@ -254,6 +265,9 @@ func (x *Empfang) Schreiben(id string, versatz int64, koerper io.Reader) (int64,
 // Abschluss checks the hash before the file is moved into place. A file that does not
 // match is kept as a partial, so the sender can fill in the missing or damaged part.
 func (x *Empfang) Abschluss(id string) (tagebuch.Eintrag, error) {
+	if !tagebuch.Gueltig(id) {
+		return tagebuch.Eintrag{}, tagebuch.ErrUngueltig
+	}
 	x.sperre.Lock()
 	v, da := x.offen[id]
 	if !da {
@@ -295,6 +309,9 @@ func (x *Empfang) Abschluss(id string) (tagebuch.Eintrag, error) {
 
 // Stand reports where a transfer currently stands.
 func (x *Empfang) Stand(id string) (tagebuch.Eintrag, error) {
+	if !tagebuch.Gueltig(id) {
+		return tagebuch.Eintrag{}, tagebuch.ErrUngueltig
+	}
 	x.sperre.Lock()
 	if v, da := x.offen[id]; da {
 		e := v.eintrag
@@ -316,6 +333,9 @@ func (x *Empfang) Verlauf() []tagebuch.Eintrag {
 
 // Vergessen drops a finished or failed entry from the list.
 func (x *Empfang) Vergessen(id string) error {
+	if !tagebuch.Gueltig(id) {
+		return tagebuch.ErrUngueltig
+	}
 	x.sperre.Lock()
 	delete(x.offen, id)
 	x.sperre.Unlock()

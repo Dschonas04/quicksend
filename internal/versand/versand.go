@@ -355,6 +355,9 @@ func (v *Versand) Liste() []tagebuch.Eintrag {
 
 // Erneut puts a parked entry back into the queue.
 func (v *Versand) Erneut(id string) error {
+	if !tagebuch.Gueltig(id) {
+		return tagebuch.ErrUngueltig
+	}
 	v.sperre.Lock()
 	e, da := v.auftraege[id]
 	if !da {
@@ -384,6 +387,9 @@ func (v *Versand) Erneut(id string) error {
 
 // Vergessen removes an entry and its staging file.
 func (v *Versand) Vergessen(id string) error {
+	if !tagebuch.Gueltig(id) {
+		return tagebuch.ErrUngueltig
+	}
 	v.sperre.Lock()
 	if e, da := v.auftraege[id]; da {
 		_ = os.Remove(e.Quelle)
